@@ -1,17 +1,27 @@
-def stream_users_in_batches(batch_size):
-    """Generator that yields users from the database in batches."""
-    import MySQLdb
+#!/usr/bin/python3
+import mysql.connector
+import MySQLdb
 
-    # Connect to MySQL database
+
+def connect_to_prodev():
+    """Establish and return a connection to the alx_prodev database using mysql.connector."""
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="!UGO2811!",
+        database="alx_prodev"
+    )
+
+
+def stream_users_in_batches(batch_size):
+    """Generator that yields users from the database in batches using MySQLdb."""
     conn = MySQLdb.connect(
         host="localhost",
         user="root",
-        passwd="!UGO2811!",    # 🔁 Update this
-        db="alx_prodev"            # 🔁 Update if needed
+        passwd="!UGO2811!",
+        db="alx_prodev"
     )
     cursor = conn.cursor()
-
-    # Query with user id
     cursor.execute("SELECT id, name, email, age FROM user_data")
 
     while True:
@@ -20,7 +30,6 @@ def stream_users_in_batches(batch_size):
             break
         yield rows
 
-    # Clean up
     cursor.close()
     conn.close()
 
