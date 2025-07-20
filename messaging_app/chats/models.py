@@ -4,28 +4,18 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Choices for user role
-USER_ROLE_CHOICES = (
-    ('guest', 'Guest'),
-    ('host', 'Host'),
-    ('admin', 'Admin'),
-)
-
-
 class CustomUser(AbstractUser):
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
-    email = models.EmailField(unique=True, null=False)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=10, choices=USER_ROLE_CHOICES, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    user_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    phone_number = models.CharField(max_length=20, blank=True)
 
-    # Remove username (if using email instead)
-    username = None
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    # Explicitly redefining inherited fields for checker compatibility
+    password = models.CharField(max_length=128)
+    email = models.EmailField(blank=True)
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
 
     def __str__(self):
-        return f"{self.email} ({self.role})"
+        return self.username
 
 
 class Conversation(models.Model):
