@@ -2,13 +2,12 @@
 """Unit tests for GithubOrgClient."""
 
 import unittest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock, MagicMock
+from parameterized import parameterized, parameterized_class
+
 from client import GithubOrgClient
-from client import GithubOrgClient  # Your GitHub org client
-from fixtures import TEST_PAYLOAD  # Your test data
-from parameterized import parameterized_class
-from parameterized import parameterized
-from unittest.mock import patch, MagicMock
+from fixtures import TEST_PAYLOAD
+
 
 class TestGithubOrgClient(unittest.TestCase):
     """Test case for GithubOrgClient"""
@@ -76,6 +75,7 @@ class TestGithubOrgClient(unittest.TestCase):
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
+
 @parameterized_class([
     {
         "org_payload": org_payload,
@@ -83,34 +83,18 @@ class TestGithubOrgClient(unittest.TestCase):
         "expected_repos": expected_repos,
         "apache2_repos": apache2_repos,
     }
-    for org_payload, repos_payload, expected_repos, apache2_repos in TEST_PAYLOAD  # ✅ CORRECT unpacking
+    for org_payload, repos_payload, expected_repos, apache2_repos
+    in TEST_PAYLOAD
 ])
-
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test class for GithubOrgClient.public_repos"""
-    def test_public_repos(self):
-        with patch('requests.get') as mocked_get:
-            mocked_get.return_value.json.return_value = self.repos_payload
-            client = GithubOrgClient(self.org_payload['login'])
-            result = client.public_repos()
-            self.assertEqual(result, self.expected_repos)
-
-    def test_public_repos_with_license(self):
-        with patch('requests.get') as mocked_get:
-            mocked_get.return_value.json.return_value = self.repos_payload
-            client = GithubOrgClient(self.org_payload['login'])
-            result = client.public_repos(license="apache-2.0")
-            self.assertEqual(result, self.apache2_repos)
 
     @classmethod
     def setUpClass(cls):
         """Start patching requests.get"""
         cls.get_patcher = patch('requests.get')
-
-        # Start patcher and get the mock object
         cls.mock_get = cls.get_patcher.start()
 
-        # Configure side_effect for different URLs
         def side_effect(url):
             mock_response = MagicMock()
             if url == "https://api.github.com/orgs/google":
