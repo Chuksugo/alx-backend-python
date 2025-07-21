@@ -1,6 +1,4 @@
-# messaging_app/chats/views.py
-
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters  # ✅ added filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
@@ -12,9 +10,10 @@ from .serializers import ConversationSerializer, MessageSerializer
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    filter_backends = [filters.SearchFilter]  # ✅ Enable search filtering
+    search_fields = ['participants__username', 'participants__email']  # ✅ searchable fields
 
     def create(self, request, *args, **kwargs):
-        """Create a new conversation with participants"""
         participants_ids = request.data.get('participants', [])
         if not participants_ids:
             return Response({"error": "Participants are required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -31,9 +30,12 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]  # ✅ Added filters
+    search_fields = ['message_body', 'sender__username']
+    ordering_fields = ['timestamp']
+    ordering = ['-timestamp']  # Default order: newest first
 
     def create(self, request, *args, **kwargs):
-        """Send a new message in an existing conversation"""
         conversation_id = request.data.get('conversation')
         sender_id = request.data.get('sender')
         message_body = request.data.get('message_body')
