@@ -88,6 +88,19 @@ class TestGithubOrgClient(unittest.TestCase):
 
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test class for GithubOrgClient.public_repos"""
+    def test_public_repos(self):
+        with patch('requests.get') as mocked_get:
+            mocked_get.return_value.json.return_value = self.repos_payload
+            client = GithubOrgClient(self.org_payload['login'])
+            result = client.public_repos()
+            self.assertEqual(result, self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        with patch('requests.get') as mocked_get:
+            mocked_get.return_value.json.return_value = self.repos_payload
+            client = GithubOrgClient(self.org_payload['login'])
+            result = client.public_repos(license="apache-2.0")
+            self.assertEqual(result, self.apache2_repos)
 
     @classmethod
     def setUpClass(cls):
