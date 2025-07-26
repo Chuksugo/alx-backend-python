@@ -2,10 +2,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Conversation, Message, CustomUser
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipant
+from .filters import MessageFilter  # <-- NEW
+from .pagination import MessagePagination  # <-- NEW
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -16,7 +19,6 @@ class ConversationViewSet(viewsets.ModelViewSet):
     search_fields = ['participants__username', 'participants__email']
 
     def get_queryset(self):
-        # Return only conversations that include the authenticated user
         return Conversation.objects.filter(participants=self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -36,10 +38,12 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipant]
-    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]  # <-- UPDATED
+    filterset_class = MessageFilter  # <-- NEW
     search_fields = ['message_body', 'sender__username']
     ordering_fields = ['timestamp']
     ordering = ['-timestamp']
+    pagination_class = MessagePagination  # <-- NEW
 
     def get_queryset(self):
         conversation_id = self.kwargs.get('conversation_pk')
