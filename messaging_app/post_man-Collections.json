@@ -1,0 +1,61 @@
+{
+  "info": {
+    "_postman_id": "abc12345-6789-def0-1234-56789abcdef0",
+    "name": "Messaging API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"yourpassword\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/token/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "token", ""]
+        }
+      }
+    },
+    {
+      "name": "Create Conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <your_token_here>",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"participants\": [1, 2]\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/conversations/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "conversations", ""]
+        }
+      }
+    }
+  ]
+}
