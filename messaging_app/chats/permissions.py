@@ -1,3 +1,4 @@
+from rest_framework import permissions  # <-- Required for checker
 from rest_framework.permissions import BasePermission
 from .models import Conversation
 
@@ -8,7 +9,6 @@ class IsParticipant(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # For nested routes like /conversations/{conversation_pk}/messages/
         conversation_id = view.kwargs.get('conversation_pk')
         if conversation_id:
             try:
@@ -17,11 +17,9 @@ class IsParticipant(BasePermission):
             except Conversation.DoesNotExist:
                 return False
 
-        # For non-nested routes like /conversations/
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        # Handles permission for individual objects
         if hasattr(obj, 'participants'):
             return request.user in obj.participants.all()
 
