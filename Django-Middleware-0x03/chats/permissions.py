@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission
 from .models import Conversation
 
 
-class IsParticipantOfConversation(BasePermission):
+class IsParticipant(BasePermission):
     """
     Custom permission:
     - Authenticated users can access safe methods
