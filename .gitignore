@@ -12,7 +12,7 @@ env/
 *.sqlite3
 
 # Ignore logs
-*.log
+#*.log
 
 # Ignore VS Code settings
 .vscode/
