@@ -86,4 +86,28 @@ class OffensiveLanguageMiddleware:
         if x_forwarded_for:
             return x_forwarded_for.split(',')[0].strip()
         return request.META.get('REMOTE_ADDR')
+    
 
+class RolepermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Allow access to non-protected routes (e.g., admin, login, static)
+        if request.path.startswith('/admin') or not request.user.is_authenticated:
+            return self.get_response(request)
+
+        # Check for user role
+        user = request.user
+
+        # Let's assume user roles are stored in user.profile.role
+        # You may need to adjust this if role is stored differently
+        if hasattr(user, 'profile'):
+            role = getattr(user.profile, 'role', None)
+        else:
+            role = getattr(user, 'role', None)
+
+        if role not in ['admin', 'moderator']:
+            return JsonResponse({'error': 'Forbidden: Insufficient role permissions'}, status=403)
+
+        return self.get_response(request)
