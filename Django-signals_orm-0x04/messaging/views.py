@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from .models import Message
 
 User = get_user_model()
 
@@ -10,3 +12,16 @@ def delete_user(request):
         user = request.user
         user.delete()
         return redirect('home')  # or your login/home page
+
+def user_messages(request):
+    messages = Message.objects.filter(sender=request.user)\
+        .select_related('receiver')\
+        .prefetch_related('replies')
+    return render(request, 'messages/user_messages.html', {'messages': messages})
+
+def threaded_messages(request):
+    top_messages = Message.objects.filter(parent_message__isnull=True)\
+        .select_related('sender', 'receiver')\
+        .prefetch_related('replies')
+
+    return render(request, 'messages/threaded.html', {'messages': top_messages})

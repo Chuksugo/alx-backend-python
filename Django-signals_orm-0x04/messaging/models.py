@@ -7,8 +7,18 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    # ✅ Add this to support threaded replies
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE
+    )
+
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
+
 
 
 class Notification(models.Model):
