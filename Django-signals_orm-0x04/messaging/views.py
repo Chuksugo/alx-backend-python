@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
@@ -32,6 +33,10 @@ def unread_inbox_view(request):
     unread_messages = Message.unread.for_user(request.user)
     return render(request, 'messages/unread_inbox.html', {'messages': unread_messages})
 
+@cache_page(60)
+def cached_conversation_view(request):
+    messages = Message.objects.filter(receiver=request.user)
+    return render(request, 'messaging/cached_conversation.html', {'messages': messages})
 
 def unread_inbox_view(request):
     # ✅ Use the manager
