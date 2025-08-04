@@ -34,7 +34,8 @@ def unread_inbox_view(request):
 
 
 def unread_inbox_view(request):
-    unread_messages = Message.objects.filter(receiver=request.user, read=False).only(
+    # ✅ Use the manager
+    unread_messages = Message.unread.unread_for_user(request.user).only(
         'id', 'sender', 'content', 'timestamp'
     )
     return render(request, 'messages/unread.html', {'messages': unread_messages})
