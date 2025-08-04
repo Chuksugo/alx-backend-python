@@ -31,3 +31,8 @@ def unread_inbox_view(request):
     # ✅ Use the custom manager
     unread_messages = Message.unread.for_user(request.user)
     return render(request, 'messages/unread_inbox.html', {'messages': unread_messages})
+
+
+def unread_inbox_view(request):
+    unread_messages = Message.unread.unread_for_user(request.user)
+    return render(request, 'messages/unread.html', {'messages': unread_messages})
