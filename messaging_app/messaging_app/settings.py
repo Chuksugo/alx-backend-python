@@ -146,3 +146,10 @@ REST_FRAMEWORK = {
 
 
 AUTH_USER_MODEL = 'chats.CustomUser'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}

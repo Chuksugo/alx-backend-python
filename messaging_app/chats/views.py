@@ -3,8 +3,9 @@ from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.views.decorators.cache import cache_page
 from .models import Conversation, Message, CustomUser
+from django.shortcuts import render
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipant
 from .filters import MessageFilter  # <-- NEW
@@ -62,3 +63,10 @@ class MessageViewSet(viewsets.ModelViewSet):
             return Response({"error": "You are not a participant of this conversation."}, status=status.HTTP_403_FORBIDDEN)
 
         serializer.save(conversation=conversation, sender=self.request.user)
+
+
+
+@cache_page(60)  # cache for 60 seconds
+def conversation_view(request):
+    messages = Message.objects.filter(receiver=request.user)
+    return render(request, 'chats/conversation.html', {'messages': messages})
