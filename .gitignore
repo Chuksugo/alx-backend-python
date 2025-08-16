@@ -12,10 +12,21 @@ env/
 *.sqlite3
 
 # Ignore logs
-#*.log
+*.log
 
 # Ignore VS Code settings
 .vscode/
 
 # Ignore Mac system files
 .DS_Store
+
+# ---------------------------
+# Django specific
+# ---------------------------
+media/              # Uploaded media files
+staticfiles/        # Collected static files
+
+# ---------------------------
+# Docker specific
+# ---------------------------
+messaging_app/.env  # Environment variables (database credentials)
