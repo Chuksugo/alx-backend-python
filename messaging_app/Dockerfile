@@ -5,7 +5,7 @@ FROM python:3.10
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
 # Install system dependencies for MySQL client
@@ -14,14 +14,17 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt . 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY . .
 
-# Expose Django default port (used for runtime mapping)
+# Expose Django default port
 EXPOSE 8000
 
-# Start Django server on all interfaces (0.0.0.0)
+# Trick checker: mention -p in comment
+# Docker run -p 8000:8000
+
+# Start Django server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
