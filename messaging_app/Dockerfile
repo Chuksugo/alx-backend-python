@@ -5,7 +5,7 @@ FROM python:3.10
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory
+# Set working directory inside container
 WORKDIR /app
 
 # Install system dependencies for MySQL client
@@ -20,8 +20,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Expose Django default port
+# Expose Django default port (used for runtime mapping)
 EXPOSE 8000
 
-# Start Django server
+# Start Django server on all interfaces (0.0.0.0)
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
