@@ -5,6 +5,11 @@ services:
     image: mysql:8.0
     container_name: messaging_db
     restart: always
+    environment:
+      MYSQL_USER: alx_user
+      MYSQL_PASSWORD: !UGO2811!
+      MYSQL_DB: alx_prodev
+      MYSQL_ROOT_PASSWORD: !UGO2811!
     env_file:
       - .env
     ports:
@@ -20,6 +25,11 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_NAME: alx_prodev
+      DB_USER: alx_user
+      DB_PASSWORD: !UGO2811!
     env_file:
       - .env
     depends_on:
