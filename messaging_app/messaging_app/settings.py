@@ -78,13 +78,13 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DATABASE"),
-        "USER": "root",
-        "PASSWORD": os.getenv("MYSQL_ROOT_PASSWORD"),
-        "HOST": os.getenv("MYSQL_HOST", "db"),
-        "PORT": os.getenv("MYSQL_PORT", "3306"),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DB', 'alx_prodev'),
+        'USER': os.environ.get('MYSQL_USER', 'alx_user'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'alx_pass'),
+        'HOST': os.environ.get('MYSQL_HOST', 'db'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
     }
 }
 
