@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.env
+db_data/
+
 
 # Ignore virtual environments
 venv/
