@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+echo "=== Checking if Minikube is installed ==="
+if ! command -v minikube &> /dev/null
+then
+    echo "âŒ Minikube not found. Please install it first:"
+    echo "í±‰ https://minikube.sigs.k8s.io/docs/start/"
+    exit 1
+fi
+echo "âœ… Minikube is installed."
+
+echo "=== Starting Minikube cluster ==="
+minikube start
+
+echo "=== Verifying cluster info ==="
+kubectl cluster-info
+
+echo "=== Listing available pods in all namespaces ==="
+kubectl get pods --all-namespaces
+
+echo "í¾‰ Kubernetes local cluster setup complete!"

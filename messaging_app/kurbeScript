@@ -1,40 +1,56 @@
 #!/bin/bash
-# kurbeScript - Start and verify Kubernetes cluster with Minikube
+# kurbeScript - Start Kubernetes cluster and verify setup
 
-set -e  # Exit on any error
+set -e  # exit on error
 
-# Check if Minikube is installed
-if ! command -v minikube &> /dev/null
-then
-    echo "❌ Minikube not found. Please install Minikube first."
+# Detect if running under Git Bash / MINGW64
+if [[ "$MSYSTEM" == "MINGW64" ]] || [[ "$MSYSTEM" == "MINGW32" ]]; then
+    echo "⚠️  You are running this script in Git Bash ($MSYSTEM)."
+    echo "❌ Minikube drivers (Docker/Hyper-V) are not supported in Git Bash on Windows."
+    echo "👉 Please run this script from PowerShell (as Administrator)."
     exit 1
 fi
 
-# Check if kubectl is installed
-if ! command -v kubectl &> /dev/null
-then
-    echo "❌ kubectl not found. Please install kubectl first."
+echo "=== Checking if Minikube is installed ==="
+if ! command -v minikube &>/dev/null; then
+    echo "❌ Minikube not found. Please install it: https://minikube.sigs.k8s.io/docs/start/"
     exit 1
 fi
+echo "✅ Minikube is installed."
 
-echo "🚀 Starting Kubernetes cluster using Minikube..."
+echo "=== Checking if kubectl is installed ==="
+if ! command -v kubectl &>/dev/null; then
+    echo "❌ kubectl not found. Please install it: https://kubernetes.io/docs/tasks/tools/"
+    exit 1
+fi
+echo "✅ kubectl is installed."
 
-# Start Minikube if not already running
-if minikube status &> /dev/null | grep -q "Running"
-then
-    echo "⚡ Minikube is already running."
+# Detect driver (Docker first, fallback to Hyper-V)
+DRIVER=""
+if command -v docker &>/dev/null && docker info >/dev/null 2>&1; then
+    DRIVER="docker"
+    echo "🔍 Using Docker driver"
+elif powershell.exe -Command "Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All | Select-String Enabled" >/dev/null 2>&1; then
+    DRIVER="hyperv"
+    echo "🔍 Using Hyper-V driver"
 else
-    minikube start --driver=docker
+    echo "❌ No supported driver (Docker/Hyper-V) found."
+    exit 1
 fi
 
-echo "✅ Kubernetes cluster started."
+echo "=== Starting Minikube cluster with $DRIVER driver ==="
+minikube start --driver=$DRIVER --cpus=2 --memory=4096
 
-# Verify the cluster
-echo "🔍 Cluster info:"
+echo "=== Updating kubectl context to Minikube ==="
+minikube update-context
+
+echo "=== Checking Minikube status ==="
+minikube status
+
+echo "=== Cluster Info ==="
 kubectl cluster-info
 
-# List all pods in all namespaces
-echo "📦 Pods in all namespaces:"
+echo "=== Pods in all namespaces ==="
 kubectl get pods --all-namespaces
 
-echo "🎉 Kubernetes setup verification complete."
+echo "🎉 Kubernetes local cluster setup complete!"
