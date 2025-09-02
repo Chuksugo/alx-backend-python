@@ -5,7 +5,7 @@ metadata:
   labels:
     app: messaging-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: messaging-app
@@ -15,15 +15,18 @@ spec:
         app: messaging-app
     spec:
       containers:
-        - name: messaging-app
-          image: ugochukwuemeka/messaging-app:latest
-          ports:
-            - containerPort: 8000
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: messaging_app.settings
-            - name: PYTHONUNBUFFERED
-              value: "1"
+      - name: messaging-app
+        image: your-dockerhub-username/messaging_app:latest  # <-- update with your pushed image
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DJANGO_SETTINGS_MODULE
+          value: "messaging_app.settings"
+        - name: PYTHONDONTWRITEBYTECODE
+          value: "1"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+
 ---
 apiVersion: v1
 kind: Service
@@ -36,4 +39,4 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-  type: ClusterIP
+  type: ClusterIP 

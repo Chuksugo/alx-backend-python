@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    tools {
+        python 'Python3'  // Requires ShiningPanda Plugin
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'chuksugo',
+                    url: 'https://github.com/Chuksugo/alx-backend-python.git'
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                sh '''
+                python -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                pytest --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'test-results.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'test-results.xml', fingerprint: true
+        }
+    }
+}
