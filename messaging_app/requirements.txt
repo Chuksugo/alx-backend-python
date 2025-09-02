@@ -10,5 +10,4 @@ djangorestframework-simplejwt==5.5.1
 python-decouple>=3.8
 django-environ==0.9.0
 drf-nested-routers==0.93.3
-pytest
-
+pytest==7.4.2
