@@ -31,36 +31,3 @@ pipeline {
         }
     }
 }
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/Chuksugo/alx-backend-python.git',
-                    branch: 'main'
-            }
-        }
-
-        stage('Install dependencies') {
-            steps {
-                sh '''
-                pip install --upgrade pip
-                pip install -r messaging_app/requirements.txt
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh 'pytest --junitxml=test-results.xml'
-            }
-        }
-
-        stage('Publish Report') {
-            steps {
-                junit 'test-results.xml'
-            }
-        }
-    }
-}
