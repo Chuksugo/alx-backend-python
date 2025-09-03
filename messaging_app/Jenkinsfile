@@ -1,31 +1,23 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
             steps {
-                // Pull code from GitHub using credentials
                 git url: 'https://github.com/Chuksugo/alx-backend-python.git', branch: 'main', credentialsId: 'github-credentials'
             }
         }
-
         stage('Install dependencies') {
             steps {
-                // Install requirements
                 sh 'pip install -r messaging_app/requirements.txt'
             }
         }
-
         stage('Run Tests') {
             steps {
-                // Run pytest and generate report
                 sh 'pytest --junitxml=report.xml'
             }
         }
-
         stage('Publish Report') {
             steps {
-                // Publish test results
                 junit 'report.xml'
             }
         }
