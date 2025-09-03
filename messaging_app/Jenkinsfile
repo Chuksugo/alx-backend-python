@@ -1,11 +1,16 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'   // Python image with pip already installed
+        }
+    }
 
     stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/Chuksugo/alx-backend-python.git',
-                    branch: 'main'
+                    branch: 'main',
+                    credentialsId: 'github-credentials'
             }
         }
 
@@ -20,13 +25,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'pytest --junitxml=test-results.xml'
-            }
-        }
-
-        stage('Publish Report') {
-            steps {
-                junit 'test-results.xml'
+                sh 'pytest --maxfail=1 --disable-warnings -q'
             }
         }
     }
