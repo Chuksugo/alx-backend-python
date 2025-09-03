@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'   // Run inside a Python container
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
@@ -25,14 +21,12 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // Run pytest and generate JUnit XML report
                 sh 'pytest --junitxml=report.xml'
             }
         }
 
         stage('Publish Report') {
             steps {
-                // Publish the test results to Jenkins
                 junit 'report.xml'
             }
         }
