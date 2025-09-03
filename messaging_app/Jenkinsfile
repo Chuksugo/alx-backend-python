@@ -12,10 +12,7 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                sh '''
-                pip install --upgrade pip
-                pip install -r messaging_app/requirements.txt
-                '''
+                sh 'pip install -r messaging_app/requirements.txt'
             }
         }
 
